@@ -7,10 +7,19 @@ body{
   background-color: lightblue;
 }
 
-header{
+header,
+footer {
   font-weight: bold;
   color:brown;
   font-family: 'Bungee Inline', cursive;
+}
+
+footer {
+  border-top: 1px solid brown;
+}
+
+h1 {
+  font-size: 400%;
 }
 
 .row {
@@ -22,12 +31,12 @@ header{
   margin-right: 3px;
 }
 
-.gifPic    {
+.gifFrame {
   margin: 3px;
-  outline: 1px solid black;
+  outline: 1px solid black; 
 }
 
-.gifPics:hover {
+.gifFrame:hover {
   outline: 2px solid gold;
 }
 
@@ -38,4 +47,8 @@ header{
 #container {
   padding-left: 5%;
   padding-right: 5%;
+}
+
+.gifFrame {
+  display: inline-block;
 }

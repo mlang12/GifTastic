@@ -5,9 +5,11 @@ $(document).ready(function(){
   var gifUrl = "";                                 //Holds the URL to send to API
   var createBtn = "";                              //Holds the button to create
   var gifData = {};                                //Holds all retreived gif data and their addresses and state on the DOM
-  var searchParam = "";                            //What the user is looking for from the form
-  var defaultSearchItems = ["cat", "dog", "fish", "monkey", "zebra"];       //Default buttons to appear on page
+  var searchParam = "";
+  var defaultBtns = ["cat", "dog", "fish", "monkey", "zebra"]                            //What the user is looking for from the form
+  var buttonItems = [];       //Default buttons to appear on page
   var currentDisplayKey = "";                      //Holds the "key" for gifs currently on display
+  var defaultState = "";                           //Holds the current state for a hover toggle
 
   //Function contains the API Call which is performed when user clicks the "create" button
   function getGif(id, callBack){
@@ -50,13 +52,14 @@ $(document).ready(function(){
     $("#container").append("<div id=\"gifHolder\" class=\"row\">")
     $("#searchHolder").append($("<button>").addClass("create").html("See Gifs!"));
     $("#searchHolder").append($("<input type=\"text\" id=\"inputField\">")) 
+    $("body").append("<footer> <h4>M A Lang 2017</h4> </footer>")
     
     $(".create").on("click", function(){
       makeButton();
     });
 
-    defaultSearchItems.forEach(function(item){
-      makeButton(item)
+    defaultBtns.forEach(function(item){
+      makeButton(item);
     });
   }
 
@@ -69,11 +72,12 @@ $(document).ready(function(){
     }
 
     //Will only proceed to create a button if the name contains characters
-    if(searchParam.length > 0){ 
+    //and if the button is not already on the page
+    if(searchParam.length > 0 && buttonItems.indexOf(searchParam) === -1 ){ 
       event.preventDefault();
-      console.log(searchParam, typeof searchParam === 'string')
       createBtn = "<button class=\"gifBtn\" id=\"" + searchParam + "\">" + searchParam + "</button>";
       $("#btnHolder").append(createBtn);
+      buttonItems.push(searchParam);
       addButtonListener();
     }
   }
@@ -82,8 +86,13 @@ $(document).ready(function(){
     var i = 0;
     currentDisplayKey = id; //stores the key of items currently in render for later use in toggle
 
-    $("#gifHolder").empty();
+    //Set the amount to render equal to the lesser of num or 
+    //the number of Gifs in the object
+    if(num > gifData[id][0].data.length){
+      num = gifData[id][0].data.length
+    }
 
+    $("#gifHolder").empty();
 
     for(; i < num ; i ++){
       gifData[id][1].push(gifData[id][0].data[i].rating); //push in the rating
@@ -91,31 +100,48 @@ $(document).ready(function(){
       gifData[id][3].push(gifData[id][0].data[i].images.fixed_width_still.url); //push in the still
       gifData[id][4].push("still") //push in the gif state
       
-      $("#gifHolder").append("<img src='" + gifData[id][3][i] + "' class='gifPic' id='gify" + i + "'/>")//add img to DOM
+      $("#gifHolder").append("<div class='gifFrame'><img src='" + gifData[id][3][i] + 
+        "' class='gifPic' id='gify" + i + "'/> <p class='rating'>" + gifData[id][1][i].toUpperCase()+ 
+        "</p></div>") //add img and rating to DOM
     }
 
+    //Set the click and hover listeners to toggle still/animate
     $(".gifPic").off();
+
     $(".gifPic").on("click", function(){
-      toggleAnimate(this.id);
+      toggleAnimate(this.id, "clk");
     });
+
+    $(".gifPic").on({
+      mouseenter: function () {
+        toggleAnimate(this.id, "hvron");
+      },
+      mouseleave: function () {
+        toggleAnimate(this.id, "hvroff");
+      }
+    });
+
   }
 
   //Checks the state of the ID and toggles the opposite
-  function toggleAnimate(id){
+  function toggleAnimate(id, fromEvent){
     var itemNumber = Number(id.substring(4, id.length));
     var state = gifData[currentDisplayKey][4][itemNumber];
 
-    if(state === "still"){
+    if(state === "still" && fromEvent === "clk"){
       $("#" + id).attr("src", gifData[currentDisplayKey][2][itemNumber]);
       gifData[currentDisplayKey][4][itemNumber] = "active";
     
-    } else if(state === "active"){
+    } else if(state === "active" && fromEvent === "clk"){
       $("#" + id).attr("src", gifData[currentDisplayKey][3][itemNumber])
       gifData[currentDisplayKey][4][itemNumber] = "still"
     
-    } else {
-      console.log("***An error occured with the state of the gif.***")
-    }
+    } else if(state === "still" && fromEvent === "hvron"){
+      $("#" + id).attr("src", gifData[currentDisplayKey][2][itemNumber]);
+
+    } else if(state === "still" && fromEvent === "hvroff"){
+      $("#" + id).attr("src", gifData[currentDisplayKey][3][itemNumber]);
+    } 
   }
 
   //Builds out the HTML Skeleton of the body of the page
