@@ -1,0 +1,41 @@
+* {
+  text-align: center;
+}
+
+header,
+body{
+  background-color: lightblue;
+}
+
+header{
+  font-weight: bold;
+  color:brown;
+  font-family: 'Bungee Inline', cursive;
+}
+
+.row {
+  padding: 10px;
+}
+
+.gifBtn{
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.gifPic    {
+  margin: 3px;
+  outline: 1px solid black;
+}
+
+.gifPics:hover {
+  outline: 2px solid gold;
+}
+
+#btnHolder {
+  border-bottom: 1px solid brown;
+}
+
+#container {
+  padding-left: 5%;
+  padding-right: 5%;
+}
