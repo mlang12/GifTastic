@@ -5,11 +5,14 @@ $(document).ready(function(){
   var gifUrl = "";                                 //Holds the URL to send to API
   var createBtn = "";                              //Holds the button to create
   var gifData = {};                                //Holds all retreived gif data and their addresses and state on the DOM
-  var searchParam = "";
-  var defaultBtns = ["cat", "dog", "fish", "monkey", "zebra"]                            //What the user is looking for from the form
-  var buttonItems = [];       //Default buttons to appear on page
+  var searchParam = "";                            //Will hold the string for which to search  
+  var buttonItems = [];                            //Holds the names of the current buttons on the page
   var currentDisplayKey = "";                      //Holds the "key" for gifs currently on display
   var defaultState = "";                           //Holds the current state for a hover toggle
+  var message = "";                                //Contains message to user of how many Gifs are displayed
+  var defaultBtns = ["cat", "dog", "fish",         //Default buttons to appear on page
+                      "monkey", "zebra"]  
+
 
   //Function contains the API Call which is performed when user clicks the "create" button
   function getGif(id, callBack){
@@ -35,23 +38,26 @@ $(document).ready(function(){
       event.preventDefault();
       if(gifData[this.id] === undefined){ //if we don't have api results for the search term
         getGif(this.id, function(id){ //run api query 
-          renderContent(id, 10);//display gifs
+          renderContent(id, $(".numSelector").val());//display gifs
         });
       } else {
-        renderContent(this.id, 10); //display gifs
+        renderContent(this.id, $(".numSelector").val()); //display gifs
       }
     })
   }
 
+  //Function called on startup. Populates the Body of the DOM with Skeleton
+  //HTML structure
   function buildOutPage(){
-    //build page structure
     $("body").append("<header class=\"row\"> <h1>GifTastic</h1> </header>")
     $("body").append("<div id=\"container\">")
     $("#container").append("<div id=\"searchHolder\" class=\"row\">")
     $("#container").append("<div id=\"btnHolder\" class=\"row\">")
     $("#container").append("<div id=\"gifHolder\" class=\"row\">")
-    $("#searchHolder").append($("<button>").addClass("create").html("See Gifs!"));
+    $("#searchHolder").append($("<button>").addClass("create").html("Add Button!"));
     $("#searchHolder").append($("<input type=\"text\" id=\"inputField\">")) 
+    $("#searchHolder").append($("<select class=\"form-control numSelector\"><option value=" + 
+      "\"10\">10</option><option value=\"25\">25</option><option value=\"50\">50</option></select>"))
     $("body").append("<footer> <h4>M A Lang 2017</h4> </footer>")
     
     $(".create").on("click", function(){
@@ -63,8 +69,9 @@ $(document).ready(function(){
     });
   }
 
+  //Creates a button and appends it to the DOM
   function makeButton(btnVal){
-    //checks if user passed a name for the button
+    //checks if JS code passed a name for the button (used to populate default buttons)
     if (btnVal === undefined){ //if no button name passed to function
       searchParam = $("#inputField").val().trim().toLowerCase(); //take the value of the user input form
     } else if(btnVal.trim().length > 0) { //otherwise if the passed variable contains a value
@@ -75,43 +82,58 @@ $(document).ready(function(){
     //and if the button is not already on the page
     if(searchParam.length > 0 && buttonItems.indexOf(searchParam) === -1 ){ 
       event.preventDefault();
-      createBtn = "<button class=\"gifBtn\" id=\"" + searchParam + "\">" + searchParam + "</button>";
-      $("#btnHolder").append(createBtn);
-      buttonItems.push(searchParam);
-      addButtonListener();
+      createBtn = "<button class=\"gifBtn\" id=\"" + searchParam + "\">" + searchParam + "</button>"; //Build button
+      $("#btnHolder").append(createBtn); //Append Button to DOM
+      buttonItems.push(searchParam); //Track in code that this button exists
+      addButtonListener(); //Re-attach click listeners to the class
     }
   }
 
+  //Function displays the Gifs when a button is clicked
   function renderContent(id, num){
     var i = 0;
     currentDisplayKey = id; //stores the key of items currently in render for later use in toggle
+    message = "Displayed " + num + " Gifs!" //tell user how many gifs successfully displayed
 
     //Set the amount to render equal to the lesser of num or 
     //the number of Gifs in the object
     if(num > gifData[id][0].data.length){
       num = gifData[id][0].data.length
+      message = "We only found " + num + " gifs to show you..."
     }
 
+    //Reset the gifHolder element and the array holding URLs/State
     $("#gifHolder").empty();
+    gifData[id][1] = [];
+    gifData[id][2] = [];
+    gifData[id][3] = [];
+    gifData[id][4] = [];
 
+    //Load GIF addresses, state, and rating into local array object from the API query response object
     for(; i < num ; i ++){
       gifData[id][1].push(gifData[id][0].data[i].rating); //push in the rating
       gifData[id][2].push(gifData[id][0].data[i].images.fixed_width.url); //push in the animated
       gifData[id][3].push(gifData[id][0].data[i].images.fixed_width_still.url); //push in the still
       gifData[id][4].push("still") //push in the gif state
       
+      //Render the still GIF to the DOM within a frame (div) and put the rating within the frame
       $("#gifHolder").append("<div class='gifFrame'><img src='" + gifData[id][3][i] + 
         "' class='gifPic' id='gify" + i + "'/> <p class='rating'>" + gifData[id][1][i].toUpperCase()+ 
-        "</p></div>") //add img and rating to DOM
+        "</p></div>") 
     }
 
     //Set the click and hover listeners to toggle still/animate
-    $(".gifPic").off();
+    $(".gifPic").off(); //Remove listeners from the class
 
+    //Add the click listener
+    //On click toggle the Gif's state. Pass the Gif's ID and the fact that 
+    //toggle is called from a click
     $(".gifPic").on("click", function(){
-      toggleAnimate(this.id, "clk");
+      toggleAnimate(this.id, "clk"); 
     });
 
+    //On hover toggle the Gif's state. Pass the Gif's ID and the fact that 
+    //toggle is called from a mouseenter or mouseleave
     $(".gifPic").on({
       mouseenter: function () {
         toggleAnimate(this.id, "hvron");
@@ -124,6 +146,10 @@ $(document).ready(function(){
   }
 
   //Checks the state of the ID and toggles the opposite
+  ///These rules alow for "preview" of the animation by
+  //hovering without formally activating the gif. When a 
+  //click event is detected it will cause the toggle mode
+  //to "stick"
   function toggleAnimate(id, fromEvent){
     var itemNumber = Number(id.substring(4, id.length));
     var state = gifData[currentDisplayKey][4][itemNumber];
