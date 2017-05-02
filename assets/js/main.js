@@ -20,7 +20,7 @@ $(document).ready(function(){
     // Create an AJAX call to retrieve GIF data
     // Note we always query max results of 50 and then limit results on client-side
     // This alows user to change quantity to display and reclick multiple times but only run 1 API query
-    gifUrl = "https://api.giphy.com/v1/gifs/search?q=" + id + "&limit=50&api_key=" + key;
+    gifUrl = "https://api.giphy.com/v1/gifs/search?q=" + id + "&api_key=" + key + "&limit=50";
     $.ajax({
       url: gifUrl,
       method: "GET"
