@@ -10,16 +10,17 @@ $(document).ready(function(){
   var currentDisplayKey = "";                      //Holds the "key" for gifs currently on display
   var defaultState = "";                           //Holds the current state for a hover toggle
   var message = "";                                //Contains message to user of how many Gifs are displayed
-  var defaultBtns = ["cat", "dog", "fish",         //Default buttons to appear on page
-                      "monkey", "zebra"]  
-
+  var defaultBtns = [
+    "cat", "dog", "fish",                          //Default buttons to appear on page
+    "monkey", "zebra"
+  ]  
 
   //Function contains the API Call which is performed when user clicks the "create" button
   function getGif(id, callBack){
     // Create an AJAX call to retrieve GIF data
     // Note we always query max results of 50 and then limit results on client-side
     // This alows user to change quantity to display and reclick multiple times but only run 1 API query
-    gifUrl = "http://api.giphy.com/v1/gifs/search?q=" + id + "&limit=50&api_key=" + key;
+    gifUrl = "https://api.giphy.com/v1/gifs/search?q=" + id + "&limit=50&api_key=" + key + "/";
     $.ajax({
       url: gifUrl,
       method: "GET"
@@ -58,6 +59,8 @@ $(document).ready(function(){
     $("#searchHolder").append($("<input type=\"text\" id=\"inputField\">")) 
     $("#searchHolder").append($("<select class=\"form-control numSelector\"><option value=" + 
       "\"10\">10</option><option value=\"25\">25</option><option value=\"50\">50</option></select>"))
+    $("#searchHolder").append("<p id=\"msg\"></p>")
+    $("#gifHolder").append("<img src=\"./assets/img/defaultGify.gif\"/>")
     $("body").append("<footer> <h4>M A Lang 2017</h4> </footer>")
     
     $(".create").on("click", function(){
@@ -122,6 +125,9 @@ $(document).ready(function(){
         "</p></div>") 
     }
 
+    //append the message to the DOM
+    $("#msg").html(message);
+
     //Set the click and hover listeners to toggle still/animate
     $(".gifPic").off(); //Remove listeners from the class
 
@@ -142,7 +148,6 @@ $(document).ready(function(){
         toggleAnimate(this.id, "hvroff");
       }
     });
-
   }
 
   //Checks the state of the ID and toggles the opposite
