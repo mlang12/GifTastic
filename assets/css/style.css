@@ -34,10 +34,6 @@ h1 {
   display: inline-block;
 }
 
-.gifFrame:hover {
-  outline: 2px solid gold;
-}
-
 #btnHolder {
   border-bottom: 1px solid brown;
 }
@@ -54,5 +50,9 @@ h1 {
 .numSelector{
   display: inline-block;
   width: 75px;
-  margin-left: 5px;
+  margin: 5px;
+}
+
+#msg {
+  margin-top: 5px;
 }

@@ -9,7 +9,7 @@ $(document).ready(function(){
   var buttonItems = [];                            //Holds the names of the current buttons on the page
   var currentDisplayKey = "";                      //Holds the "key" for gifs currently on display
   var defaultState = "";                           //Holds the current state for a hover toggle
-  var message = "";                                //Contains message to user of how many Gifs are displayed
+  var message = "Welcome! Click a button...";      //Contains message to user of how many Gifs are displayed
   var defaultBtns = [
     "cat", "dog", "fish",                          //Default buttons to appear on page
     "monkey", "zebra"
@@ -62,7 +62,7 @@ $(document).ready(function(){
     $("#searchHolder").append("<p id=\"msg\"></p>")
     $("#gifHolder").append("<img src=\"./assets/img/defaultGify.gif\"/>")
     $("body").append("<footer> <h4>M A Lang 2017</h4> </footer>")
-    
+    $("#msg").html(message);
     $(".create").on("click", function(){
       makeButton();
     });
@@ -96,13 +96,13 @@ $(document).ready(function(){
   function renderContent(id, num){
     var i = 0;
     currentDisplayKey = id; //stores the key of items currently in render for later use in toggle
-    message = "Displayed " + num + " Gifs!" //tell user how many gifs successfully displayed
+    message = "Displayed " + num + " " + id + " Gifs!" //tell user how many gifs successfully displayed
 
     //Set the amount to render equal to the lesser of num or 
     //the number of Gifs in the object
     if(num > gifData[id][0].data.length){
       num = gifData[id][0].data.length
-      message = "We only found " + num + " gifs to show you..."
+      message = "We only found " + num + " " + id + " gifs to show you..."
     }
 
     //Reset the gifHolder element and the array holding URLs/State
