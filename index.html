@@ -27,27 +27,45 @@
     </header>
 
     <div id="container">
-
-      <div id="searchHolder" class="row">
-        <div class="col-xl-3 col-xs-3"></div>
-        <div class="input-group col-xl-6 col-xs-6">
-          <span class="input-group-btn">
-            <button class="btn btn-default create" type="button">Show Me!</button>
-          </span>
-          <input type="text" class="form-control" id="inputField">
+      <div id="holder">
+        <div id="searchHolder" class="row">
+          <div class="col-xl-2 col-xs-2"></div>
+          <div class="input-group col-xl-8 col-xs-8">
+            <span class="input-group-btn">
+              <button class="btn btn-default create" type="button">Show Me!</button>
+            </span>
+            <input type="text" class="form-control" id="inputField">
+          </div>
+          <div class="col-xl-2 col-xs-2"></div>
         </div>
-        <div class="col-xl-3 col-xs-3"></div>
-      </div>
+        
+        <div id="quantChoice" class="row">
+          <div class="col-xl-3 col-xs-3"></div>
+            <div class="col-xl-6 col-xs-6"> 
+              <label>Select how many Gifs</label>
+              <select class="form-control numSelector">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select> 
+            </div>
+           <div class="col-xl-3 col-xs-3"></div>            
+        </div>
 
-      <div class="row" id="dispRow">
-        <label>Display</label>
-        <select class="form-control numSelector">
-          <option value="10">10</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-        </select>
+        <div class="row" id="themeRow">
+          <div class="col-xl-3 col-xs-3"></div>
+          <div class="col-xl-6 col-xs-6"> 
+            <label>Apply Theme</label>
+            <div class="btn-group" role="group" aria-label="...">
+              <button type="button" class="btn btn-default themeBtn" id="activeTheme" data="none">None</button>
+              <button type="button" class="btn btn-default themeBtn" data="dancing">Dancing</button>
+              <button type="button" class="btn btn-default themeBtn" data="colorful">Colorful</button>
+              <button type="button" class="btn btn-default themeBtn" data="retro">Retro</button>
+            </div>
+          </div>
+          <div class="col-xl-3 col-xs-3"></div>
+        </div>
       </div>
-
       <p id="msg"></p>
 
       <div id="btnHolder" class="row">

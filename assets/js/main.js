@@ -9,12 +9,19 @@ $(document).ready(function(){
   var buttonItems = [];                            //Holds the names of the current buttons on the page
   var currentDisplayKey = "";                      //Holds the "key" for gifs currently on display
   var message = "Welcome! Click a button...";      //Contains message to user of how many Gifs are displayed
+  var currentTheme = "";                           //The value of the current theme
   var defaultBtns = [
     "cat", "dog", "fish",                          //Default buttons to appear on page
     "monkey", "zebra", "moose",
     "fox", "dingo", "frog",
     "bees"
   ];
+  var themes = {
+    "none": "",
+    "dancing": "dancing",
+    "colorful": "colors",
+    "retro": "retro"
+  };                                   //Different themese user can select
 
   //Function contains the API Call which is performed when user clicks the "create" button
   function getGif(id, callBack){
@@ -67,6 +74,18 @@ $(document).ready(function(){
           $(".create").click();
       }
     });
+
+    //Listen for theme selection
+    $(".themeBtn").on("click", function(){
+      event.preventDefault();
+      var id = $(event.target).attr("data")//.data; //get the id of the specific clicked button
+      currentTheme = "";
+      if (themes[id] !== undefined){
+        $("#activeTheme").attr("id", "");
+        currentTheme = themes[id];
+        $(event.target).attr("id", "activeTheme");
+      } 
+    });
   }
 
   //Function will check if a valid button was clicked and if so
@@ -74,16 +93,20 @@ $(document).ready(function(){
   //a function to render the GIFs
   function btnPress(id){
     //check for valid button name before proceeding
+    var themeID = currentTheme + " " + id;
+
     if(buttonItems.indexOf(id) === -1){ 
       return;
     }
 
-    if(gifData[id] === undefined){ //if we don't have api results for the search term
-      getGif(id, function(id){ //run api query 
-        renderContent(id, $(".numSelector").val());//display gifs
+    if(gifData[themeID] === undefined){ //if we don't have api results for the search term
+      getGif(themeID, function(themeID){ //run api query 
+        console.log("themeID: " + themeID);
+        renderContent(themeID, $(".numSelector").val());//display gifs
       });
     } else {
-      renderContent(id, $(".numSelector").val()); //display gifs
+      console.log("themeID: " + themeID);
+      renderContent(themeID, $(".numSelector").val()); //display gifs
     }
   }
 
